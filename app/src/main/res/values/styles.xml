@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Estilo TextInputLayout cuando ocurre error -->
+    <style name="TextInputLayout.OutlinedBoxStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeErrorColor">@color/errorColor</item>
+        <item name="errorIconTint">@color/errorColor</item>
+        <item name="errorTextColor">@color/errorColor</item>
+        <item name="errorIconDrawable">@null</item>
+        <item name="helperTextTextAppearance">@style/TextAppearance.MaterialComponents.Subtitle1
+        </item>
+    </style>
+
+</resources>
