@@ -11,6 +11,8 @@ import android.widget.ArrayAdapter
 import androidx.navigation.fragment.findNavController
 import com.rolandoselvera.founditall.R
 import com.rolandoselvera.founditall.databinding.FragmentSearchBinding
+import com.rolandoselvera.founditall.model.Result
+import com.rolandoselvera.founditall.view.adapter.SearchAdapter
 
 class SearchFragment : Fragment() {
 
@@ -29,6 +31,28 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setUpSpinner()
+
+        val list = listOf(
+            Result(1, "Harry Potter", "Movie", "", "", ""),
+            Result(2, "Disney Channel", "Series", "", "", ""),
+            Result(3, "Harry Potter", "Movie", "", "", ""),
+            Result(4, "Disney Channel", "Series", "", "", ""),
+            Result(5, "Harry Potter", "Movie", "", "", ""),
+            Result(6, "Disney Channel", "Series", "", "", ""),
+            Result(7, "Harry Potter", "Movie", "", "", ""),
+            Result(8, "Disney Channel", "Series", "", "", "")
+        )
+
+        val adapter = SearchAdapter { result ->
+            val action = SearchFragmentDirections
+                .actionSearchFragmentToDetailFragment()
+            this.findNavController().navigate(action)
+        }
+
+        adapter.submitList(list)
+
+        binding.recyclerView.adapter = adapter
+
 
         binding.search.setOnClickListener {
             val action = SearchFragmentDirections
