@@ -4,11 +4,15 @@
     <dimen name="text_18">18sp</dimen>
     <dimen name="text_25">25sp</dimen>
     <dimen name="dimen_0">0dp</dimen>
+    <dimen name="dimen_1">1dp</dimen>
+    <dimen name="dimen_4">4dp</dimen>
     <dimen name="dimen_8">8dp</dimen>
     <dimen name="dimen_16">16dp</dimen>
     <dimen name="dimen_20">20dp</dimen>
+    <dimen name="dimen_22">22dp</dimen>
     <dimen name="dimen_24">24dp</dimen>
     <dimen name="dimen_32">32dp</dimen>
+    <dimen name="dimen_58">58dp</dimen>
     <dimen name="dimen_75">75dp</dimen>
     <dimen name="dimen_150">150dp</dimen>
 </resources>
