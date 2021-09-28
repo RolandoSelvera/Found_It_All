@@ -2,22 +2,26 @@ package com.rolandoselvera.founditall.view
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.rolandoselvera.founditall.R
 import com.rolandoselvera.founditall.databinding.FragmentSearchBinding
-import com.rolandoselvera.founditall.model.Result
 import com.rolandoselvera.founditall.view.adapter.SearchAdapter
+import com.rolandoselvera.founditall.viewmodel.SearchViewModel
 
 class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
+
+    private val searchViewModel: SearchViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,27 +36,19 @@ class SearchFragment : Fragment() {
 
         setUpSpinner()
 
-        val list = listOf(
-            Result(1, "Harry Potter", "Movie", "", "", ""),
-            Result(2, "Disney Channel", "Series", "", "", ""),
-            Result(3, "Harry Potter", "Movie", "", "", ""),
-            Result(4, "Disney Channel", "Series", "", "", ""),
-            Result(5, "Harry Potter", "Movie", "", "", ""),
-            Result(6, "Disney Channel", "Series", "", "", ""),
-            Result(7, "Harry Potter", "Movie", "", "", ""),
-            Result(8, "Disney Channel", "Series", "", "", "")
-        )
+        searchViewModel.onCreate()
 
         val adapter = SearchAdapter { result ->
             val action = SearchFragmentDirections
                 .actionSearchFragmentToDetailFragment()
             this.findNavController().navigate(action)
         }
-
-        adapter.submitList(list)
-
         binding.recyclerView.adapter = adapter
 
+        searchViewModel.resultModel.observe(this.viewLifecycleOwner) {
+            adapter.submitList(it)
+            Log.e("TAG1", mutableListOf(it).toString())
+        }
 
         binding.search.setOnClickListener {
             val action = SearchFragmentDirections

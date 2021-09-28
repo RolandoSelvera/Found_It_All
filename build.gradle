@@ -5,6 +5,15 @@ buildscript {
         nav_version = '2.3.5'
         lifecycle_version = '2.3.1'
         youtube_player_version = '10.0.5'
+
+        // Glide:
+        glide_version = '4.12.0'
+        glide_compiler = '4.12.0'
+
+        // Retrofit:
+        retrofit_version = '2.9.0'
+        gson_converter = '2.9.0'
+        interceptor_version = '4.7.2'
     }
     repositories {
         google()
