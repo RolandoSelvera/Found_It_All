@@ -66,4 +66,7 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$gson_converter"  // Convierte JSON a objetos Java y viceversa
     implementation "com.squareup.okhttp3:logging-interceptor:$interceptor_version"
+
+    // Preferences:
+    implementation "androidx.preference:preference-ktx:$preferences_version"
 }

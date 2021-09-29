@@ -13,7 +13,7 @@
     <string name="similar">Similar:</string>
 
     <string-array name="categories">
-        <item>All</item>
+        <item>Select:</item>
         <item>Authors</item>
         <item>Books</item>
         <item>Games</item>
@@ -21,16 +21,5 @@
         <item>Movies</item>
         <item>Music</item>
         <item>Shows</item>
-    </string-array>
-
-    <string-array name="categories_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
     </string-array>
 </resources>

@@ -13,9 +13,11 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.rolandoselvera.founditall.R
+import com.rolandoselvera.founditall.data.local.preferences.PreferencesProvider
 import com.rolandoselvera.founditall.databinding.FragmentSearchBinding
 import com.rolandoselvera.founditall.view.adapter.SearchAdapter
 import com.rolandoselvera.founditall.viewmodel.SearchViewModel
+import android.widget.AdapterView
 
 class SearchFragment : Fragment() {
 
@@ -137,13 +139,103 @@ class SearchFragment : Fragment() {
     private fun setUpSpinner() {
         val categories = resources.getStringArray(R.array.categories)
         val adapter = ArrayAdapter(requireContext(), R.layout.item_dropdown, categories)
+
         binding.apply {
-            spinnerCategory.setAdapter(adapter)
+            spinnerCategory.adapter = adapter
+
+            spinnerCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    PreferencesProvider(context).saveCategory(position)
+                    changeCategory(position)
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
 
             spinnerCategory.setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
                     hideKeyboard()
                 }
+            }
+        }
+    }
+
+    private fun loadPreferences(): Int {
+        val categorySelected = PreferencesProvider(context).getCategory()
+
+        when (categorySelected) {
+            0 -> changeCategory(categorySelected)
+            1 -> changeCategory(categorySelected)
+            2 -> changeCategory(categorySelected)
+            3 -> changeCategory(categorySelected)
+            4 -> changeCategory(categorySelected)
+            5 -> changeCategory(categorySelected)
+            6 -> changeCategory(categorySelected)
+            7 -> changeCategory(categorySelected)
+        }
+
+        return categorySelected
+    }
+
+    private fun changeCategory(itemSelected: Int) {
+
+        when (searchViewModel.selectedCategory(itemSelected)) {
+            // Select:
+            0 -> {
+                binding.spinnerCategory.setSelection(0)
+                enableSearch()
+            }
+            // Authors:
+            1 -> {
+                binding.spinnerCategory.setSelection(1)
+                enableSearch()
+            }
+            // Books:
+            2 -> {
+                binding.spinnerCategory.setSelection(2)
+                enableSearch()
+            }
+            // Games:
+            3 -> {
+                binding.spinnerCategory.setSelection(3)
+                enableSearch()
+            }
+            // Podcasts:
+            4 -> {
+                binding.spinnerCategory.setSelection(4)
+                enableSearch()
+            }
+            // Movies:
+            5 -> {
+                binding.spinnerCategory.setSelection(5)
+                enableSearch()
+            }
+            // Music:
+            6 -> {
+                binding.spinnerCategory.setSelection(6)
+                enableSearch()
+            }
+            // Shows:
+            7 -> {
+                binding.spinnerCategory.setSelection(7)
+                enableSearch()
+            }
+        }
+    }
+
+    private fun enableSearch() {
+        binding.apply {
+            if (spinnerCategory.selectedItemPosition == 0) {
+                tilSearch.isEnabled = false
+                search.isEnabled = false
+            } else {
+                tilSearch.isEnabled = true
+                search.isEnabled = true
             }
         }
     }
@@ -155,6 +247,11 @@ class SearchFragment : Fragment() {
         val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as
                 InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadPreferences()
     }
 
     /**
