@@ -12,6 +12,15 @@
     <string name="result">Result:</string>
     <string name="similar">Similar:</string>
 
+    <!-- Para búsquedas: -->
+    <string name="search_by_author">author:%1$s</string>
+    <string name="search_by_book">book:%1$s</string>
+    <string name="search_by_game">game:%1$s</string>
+    <string name="search_by_podcast">podcast:%1$s</string>
+    <string name="search_by_movie">movie:%1$s</string>
+    <string name="search_by_music">music:%1$s</string>
+    <string name="search_by_show">show:%1$s</string>
+
     <string-array name="categories">
         <item>Select:</item>
         <item>Authors</item>

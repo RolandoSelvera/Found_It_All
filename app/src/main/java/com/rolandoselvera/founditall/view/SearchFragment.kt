@@ -128,11 +128,26 @@ class SearchFragment : Fragment() {
 
     private fun setUpSearchButton() {
         binding.search.setOnClickListener {
-            val search = binding.fieldSearch.text.toString()
-            searchViewModel.onCreate(search)
+            val userSearch = binding.fieldSearch.text.toString()
+            val searchWithCategory = checkSelectedCategory(userSearch)
+
+            searchViewModel.onCreate(searchWithCategory)
             hideKeyboard()
 
             setUpContainers()
+        }
+    }
+
+    private fun checkSelectedCategory(search: String): String {
+        return when (binding.spinnerCategory.selectedItemPosition) {
+            1 -> getString(R.string.search_by_author, search)
+            2 -> getString(R.string.search_by_book, search)
+            3 -> getString(R.string.search_by_game, search)
+            4 -> getString(R.string.search_by_podcast, search)
+            5 -> getString(R.string.search_by_movie, search)
+            6 -> getString(R.string.search_by_music, search)
+            7 -> getString(R.string.search_by_show, search)
+            else -> search
         }
     }
 
