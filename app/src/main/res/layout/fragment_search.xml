@@ -70,31 +70,32 @@
         app:layout_constraintTop_toTopOf="@+id/tilSearch"
         app:tint="@color/black" />
 
-    <TextView
-        android:id="@+id/titleNothing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/questrial"
-        android:text="@string/nothing_here"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_18"
+    <include
+        android:id="@+id/containerStates"
+        layout="@layout/states_container"
+        android:visibility="visible" />
+
+    <include
+        android:id="@+id/containerInfo"
+        layout="@layout/item_list_info"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_0"
+        android:layout_marginTop="@dimen/dimen_24"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tilSpinnerCategory" />
+
+    <include
+        android:id="@+id/containerResults"
+        layout="@layout/results_similar_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_0"
+        android:layout_marginTop="@dimen/dimen_24"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tilSpinnerCategory" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/dimen_24"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilSpinnerCategory"
-        tools:itemCount="10"
-        tools:listitem="@layout/item_list_results" />
+        app:layout_constraintTop_toBottomOf="@+id/containerInfo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

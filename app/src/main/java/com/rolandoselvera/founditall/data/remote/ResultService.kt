@@ -10,14 +10,27 @@ import kotlinx.coroutines.withContext
 class ResultService {
 
     private val retrofit = RetrofitHelper.getRetrofit()
+    private val response = retrofit.create(ResultApiClient::class.java)
 
     /**
-     * Método que devuelve los resultados de la consulta a la API.
+     * Método que devuelve los resultados de la consulta del nodo 'Results' a la API.
+     *
+     * @param search Término de búsqueda.
      */
-    suspend fun getResults(): List<ResultModel> {
+    suspend fun getResults(search: String): List<ResultModel> {
         return withContext(Dispatchers.IO) {
-            val response = retrofit.create(ResultApiClient::class.java).getAllResults()
-            response.body()?.results?.resultsEndpoint ?: emptyList()
+            response.getAllResults(search).body()?.results?.resultsEndpoint ?: emptyList()
+        }
+    }
+
+    /**
+     * Método que devuelve los resultados de la consulta del nodo 'Info' a la API.
+     *
+     * @param search Término de búsqueda.
+     */
+    suspend fun getInfo(search: String): List<ResultsSearch> {
+        return withContext(Dispatchers.IO) {
+            response.getAllResults(search).body()?.results?.resultsInfo ?: emptyList()
         }
     }
 }

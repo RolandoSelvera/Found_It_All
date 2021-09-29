@@ -15,17 +15,34 @@
         android:layout_width="match_parent"
         android:layout_height="0dp">
 
-        <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-            android:id="@+id/youTubePlayer"
+        <LinearLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:autoPlay="false"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0"
-            app:showFullScreenButton="false" />
+            app:layout_constraintVertical_bias="0">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_190"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_img_preview"
+                android:visibility="gone" />
+
+            <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                android:id="@+id/youTubePlayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:autoPlay="false"
+                app:showFullScreenButton="false" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/titleName"
@@ -39,7 +56,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/youTubePlayer" />
+            app:layout_constraintTop_toBottomOf="@+id/container" />
 
         <TextView
             android:id="@+id/subCategory"
@@ -53,7 +70,7 @@
         <TextView
             android:id="@+id/subDescription"
             style="@style/TextViewSubtitle"
-            android:layout_marginTop="@dimen/dimen_24"
+            android:layout_marginTop="@dimen/dimen_8"
             android:text="@string/sub_description"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

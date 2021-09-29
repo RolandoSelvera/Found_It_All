@@ -1,7 +1,7 @@
 package com.rolandoselvera.founditall.data.remote
 
 import retrofit2.Response
-import retrofit2.http.GET
+import retrofit2.http.*
 
 private const val API_KEY = "417201-TestAppM-6O2E8KBC"
 
@@ -12,6 +12,8 @@ interface ResultApiClient {
      *
      * @return Devuelve todos los resultados de la consulta.
      */
-    @GET("similar?info=1&q=Thor: Ragnarok")
-    suspend fun getAllResults(): Response<ResultsSimilar>
+    @GET("similar?info=1&k=$API_KEY")
+    suspend fun getAllResults(
+        @Query("q") search: String
+    ): Response<ResultsSimilar>
 }

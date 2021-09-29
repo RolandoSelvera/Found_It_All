@@ -2,7 +2,6 @@ package com.rolandoselvera.founditall.view
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +10,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.rolandoselvera.founditall.R
 import com.rolandoselvera.founditall.databinding.FragmentSearchBinding
 import com.rolandoselvera.founditall.view.adapter.SearchAdapter
@@ -36,24 +37,74 @@ class SearchFragment : Fragment() {
 
         setUpSpinner()
 
-        searchViewModel.onCreate()
+        setUpContainers()
 
         val adapter = SearchAdapter { result ->
             val action = SearchFragmentDirections
-                .actionSearchFragmentToDetailFragment()
+                .actionSearchFragmentToDetailFragment(
+                    arrayOf(
+                        result.name.toString(),
+                        result.type.toString(),
+                        result.youTubeId,
+                        result.wikiTeaser
+                    )
+                )
             this.findNavController().navigate(action)
         }
-        binding.recyclerView.adapter = adapter
+        binding.containerResults.recyclerView.adapter = adapter
 
         searchViewModel.resultModel.observe(this.viewLifecycleOwner) {
             adapter.submitList(it)
-            Log.e("TAG1", mutableListOf(it).toString())
+        }
+
+        searchViewModel.resultInfo.observe(this.viewLifecycleOwner) {
+            binding.apply {
+                containerInfo.title.text = it?.get(0)?.name
+                containerInfo.category.text =
+                    it?.get(0)?.type?.replaceFirstChar {  // Convierte el primer caracter del texto a mayúscula
+                        it.uppercase()
+                    }
+                // Muestra miniaturas (thumbnails) de videos de YouTube con Glide:
+                Glide.with(containerInfo.image.context)
+                    .asBitmap()
+                    .error(R.drawable.ic_img_preview)  // Miniatura si ocurre un error al cargar imagen
+                    .load(
+                        containerInfo.image.context.getString(
+                            R.string.youtube_url_thumbnail, it?.get(0)?.youTubeId
+                        )
+                    )
+                    .diskCacheStrategy(DiskCacheStrategy.DATA)
+                    .into(containerInfo.image)
+            }
         }
 
         binding.search.setOnClickListener {
-            val action = SearchFragmentDirections
-                .actionSearchFragmentToDetailFragment()
-            this.findNavController().navigate(action)
+            val search = binding.fieldSearch.text.toString()
+            searchViewModel.onCreate(search)
+            hideKeyboard()
+
+            setUpContainers()
+        }
+    }
+
+    private fun checkState(): Boolean? {
+        return searchViewModel.isLoadingModel.value
+    }
+
+    // TODO: Revisar visibilidad de contenedores.
+    private fun setUpContainers() {
+        val states = checkState()
+
+        binding.apply {
+            if (states == false) {
+                containerStates.root.visibility = View.GONE
+                containerInfo.root.visibility = View.VISIBLE
+                containerResults.root.visibility = View.VISIBLE
+            } else {
+                containerStates.root.visibility = View.VISIBLE
+                containerInfo.root.visibility = View.GONE
+                containerResults.root.visibility = View.GONE
+            }
         }
     }
 

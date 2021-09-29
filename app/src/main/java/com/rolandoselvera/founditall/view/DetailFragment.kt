@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -17,6 +18,8 @@ class DetailFragment : Fragment() {
 
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
+
+    private val navigationArgs: DetailFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,16 +32,36 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val videoId = "S0Q4gqBUs7c"
+        // TODO: Recibe estos datos temporalmente de esta forma, idealmente hacerlo por consulta a BD
+        val navArrayDetail = navigationArgs.name
+        val name = navArrayDetail[0]
+        val category = navArrayDetail[1].replaceFirstChar {
+            it.uppercase()
+        }
+        val videoId = navArrayDetail[2]
+        val description = navArrayDetail[3]
 
-        youTubePlayerReady(videoId)
+        binding.apply {
+            titleName.text = getString(R.string.title_name, name)
+            subCategory.text = getString(R.string.sub_category, category)
+            subDescription.text = getString(R.string.sub_description, description)
+        }
 
-        binding.subDescription.text = getString(
-            R.string.sub_description,
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam luctus nulla eget ligula bibendum imperdiet. Fusce et urna elementum nibh bibendum placerat eget aliquam nulla. Phasellus mollis est tempus, rutrum erat eget, elementum orci. Integer fringilla velit quis enim faucibus, aliquet fringilla tellus semper. Nunc tempus tortor ut libero tincidunt gravida. Nunc fermentum lectus quam, ut commodo augue placerat nec. Duis lobortis augue eget felis laoreet, sed commodo enim vulputate. Proin accumsan leo id nisl tincidunt sodales. Nunc faucibus commodo condimentum. Aenean in orci sit amet urna malesuada tristique. Duis mollis mattis quam quis euismod. Aenean porta dui vel nibh pulvinar, non ultrices arcu lobortis. In vel convallis magna.\n" +
-                    "\n" +
-                    "Sed ultricies dolor ac tellus sagittis, eget varius ligula finibus. Vestibulum a velit ut metus feugiat aliquet in vel diam. In euismod felis vel dapibus vehicula. Suspendisse ut nunc id elit dictum pretium. Maecenas et fermentum libero, id sollicitudin mauris. Aliquam elit nibh, condimentum a lacus eu, luctus malesuada ex. Ut luctus vitae lectus vitae mattis. Curabitur maximus pulvinar convallis. Phasellus sed tristique dui. Nam non mauris efficitur, varius nunc a, venenatis sem. Aenean et neque dolor."
-        )
+        isVideoAvailable(videoId)
+    }
+
+    /**
+     * Establece el preview de detalle (video si hay un 'id' de YouTube disponible, imagen si no lo hay).
+     *
+     * @param videoId Id de video de YouTube.
+     */
+    private fun isVideoAvailable(videoId: String) {
+        if (!videoId.isNullOrBlank()) {
+            binding.youTubePlayer.visibility = View.VISIBLE
+            youTubePlayerReady(videoId)
+        } else {
+            binding.image.visibility = View.VISIBLE
+        }
     }
 
     /**
@@ -52,6 +75,8 @@ class DetailFragment : Fragment() {
      * Listener del reproductor de YouTube. Si el reproductor se inicializó correctamente,
      * muestra la miniatura del video, a la espera de la reproducción. De lo contrario,
      * lanza error.
+     *
+     * @param youTubeId Id de video de YouTube.
      */
     private fun youTubePlayerReady(youTubeId: String) {
 
