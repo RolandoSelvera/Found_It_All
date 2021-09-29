@@ -22,6 +22,8 @@ class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var adapter: SearchAdapter
+
     private val searchViewModel: SearchViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -39,7 +41,17 @@ class SearchFragment : Fragment() {
 
         setUpContainers()
 
-        val adapter = SearchAdapter { result ->
+        setUpAdapter()
+
+        observeResults()
+
+        observeInfo()
+
+        setUpSearchButton()
+    }
+
+    private fun setUpAdapter() {
+        adapter = SearchAdapter { result ->
             val action = SearchFragmentDirections
                 .actionSearchFragmentToDetailFragment(
                     arrayOf(
@@ -52,11 +64,23 @@ class SearchFragment : Fragment() {
             this.findNavController().navigate(action)
         }
         binding.containerResults.recyclerView.adapter = adapter
+    }
 
+    /**
+     * Método que observa los resultados de consulta a Endpoint 'Results'
+     * y los muestra al usuario.
+     */
+    private fun observeResults() {
         searchViewModel.resultModel.observe(this.viewLifecycleOwner) {
             adapter.submitList(it)
         }
+    }
 
+    /**
+     * Método que observa los resultados de consulta a Endpoint 'Info'
+     * y los muestra al usuario.
+     */
+    private fun observeInfo() {
         searchViewModel.resultInfo.observe(this.viewLifecycleOwner) {
             binding.apply {
                 containerInfo.title.text = it?.get(0)?.name
@@ -76,14 +100,6 @@ class SearchFragment : Fragment() {
                     .diskCacheStrategy(DiskCacheStrategy.DATA)
                     .into(containerInfo.image)
             }
-        }
-
-        binding.search.setOnClickListener {
-            val search = binding.fieldSearch.text.toString()
-            searchViewModel.onCreate(search)
-            hideKeyboard()
-
-            setUpContainers()
         }
     }
 
@@ -105,6 +121,16 @@ class SearchFragment : Fragment() {
                 containerInfo.root.visibility = View.GONE
                 containerResults.root.visibility = View.GONE
             }
+        }
+    }
+
+    private fun setUpSearchButton() {
+        binding.search.setOnClickListener {
+            val search = binding.fieldSearch.text.toString()
+            searchViewModel.onCreate(search)
+            hideKeyboard()
+
+            setUpContainers()
         }
     }
 
