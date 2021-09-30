@@ -73,9 +73,18 @@ class SearchFragment : Fragment() {
             }
         } else {
             searchViewModel.allResultsDb.observe(this.viewLifecycleOwner) {
-                adapter.submitList(it.map {
-                    ResultModel(it.id, it.name, it.type, it.wikiTeaser, it.youTubeUrl, it.youTubeId)
-                })
+                if (!it.isNullOrEmpty()) {
+                    adapter.submitList(it.map {
+                        ResultModel(
+                            it.id,
+                            it.name.toString(),
+                            it.type.toString(),
+                            it.wikiTeaser.toString(),
+                            it.youTubeUrl.toString(),
+                            it.youTubeId.toString()
+                        )
+                    })
+                }
             }
         }
     }
@@ -90,30 +99,33 @@ class SearchFragment : Fragment() {
 
                 statesContainers = !infoResult.isNullOrEmpty()
 
-                val title = infoResult?.get(0)?.name
+                val title = infoResult?.get(0)?.name.toString()
                 val type =
                     infoResult?.get(0)?.type?.replaceFirstChar {  // Convierte el primer caracter del texto a mayúscula
                         it.uppercase()
-                    }
+                    }.toString()
                 val youtubeId = infoResult?.get(0)?.youTubeId.toString()
                 val wikiTeaser = infoResult?.get(0)?.wikiTeaser.toString()
 
-                setUpInfoResult(title.toString(), type.toString(), youtubeId, wikiTeaser)
+                setUpInfoResult(title, type, youtubeId, wikiTeaser)
+
             }
         } else {
             searchViewModel.allResultsDb.observe(this.viewLifecycleOwner) { infoResult ->
 
                 statesContainers = !infoResult.isNullOrEmpty()
 
-                val title = infoResult?.get(0)?.name
-                val type =
-                    infoResult?.get(0)?.type?.replaceFirstChar {  // Convierte el primer caracter del texto a mayúscula
-                        it.uppercase()
-                    }
-                val youtubeId = infoResult?.get(0)?.youTubeId.toString()
-                val wikiTeaser = infoResult?.get(0)?.wikiTeaser.toString()
+                if (!infoResult.isNullOrEmpty()) {
+                    val title = infoResult[0].name.toString()
+                    val type =
+                        infoResult[0].type?.replaceFirstChar {  // Convierte el primer caracter del texto a mayúscula
+                            it.uppercase()
+                        }.toString()
+                    val youtubeId = infoResult[0].youTubeId.toString()
+                    val wikiTeaser = infoResult[0].wikiTeaser.toString()
 
-                setUpInfoResult(title.toString(), type.toString(), youtubeId, wikiTeaser)
+                    setUpInfoResult(title, type, youtubeId, wikiTeaser)
+                }
             }
         }
     }
@@ -152,8 +164,8 @@ class SearchFragment : Fragment() {
                     arrayOf(
                         result.name.toString(),
                         result.type.toString(),
-                        result.youTubeId,
-                        result.wikiTeaser
+                        result.youTubeId.toString(),
+                        result.wikiTeaser.toString()
                     )
                 )
             this.findNavController().navigate(action)
@@ -171,7 +183,8 @@ class SearchFragment : Fragment() {
         wikiTeaser: String
     ) {
         binding.apply {
-            if (type.equals("Unknown")) {
+
+            if (type == "Unknown") {
                 statesContainers = false
                 containerStates.progress.visibility = View.GONE
                 containerStates.titleStates.text = getString(
@@ -258,10 +271,14 @@ class SearchFragment : Fragment() {
                     containerInfo.root.visibility = View.VISIBLE
                     containerResults.root.visibility = View.VISIBLE
 
-                    containerResults.similar.text = getString(
-                        R.string.similar,
-                        searchViewModel.resultModel.value?.size.toString()
-                    )
+                    val similarCount = searchViewModel.resultModel.value?.size
+
+                    if (similarCount != null) {
+                        containerResults.similar.text =
+                            getString(R.string.similar, similarCount.toString())
+                    } else {
+                        containerResults.similar.text = getString(R.string.similar, "")
+                    }
                 }
                 false -> {
                     containerStates.root.visibility = View.VISIBLE

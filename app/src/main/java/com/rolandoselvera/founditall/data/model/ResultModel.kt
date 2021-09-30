@@ -10,9 +10,9 @@ data class ResultModel(
     @SerializedName("Type")
     val type: String?,
     @SerializedName("wTeaser")
-    val wikiTeaser: String,
+    val wikiTeaser: String?,
     @SerializedName("yUrl")
-    val youTubeUrl: String,
+    val youTubeUrl: String?,
     @SerializedName("yID")
-    val youTubeId: String
+    val youTubeId: String?
 ) : Serializable

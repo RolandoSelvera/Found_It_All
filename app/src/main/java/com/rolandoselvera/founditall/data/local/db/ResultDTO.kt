@@ -13,9 +13,9 @@ data class ResultDTO(
     @ColumnInfo(name = "Type")
     val type: String?,
     @ColumnInfo(name = "wTeaser")
-    val wikiTeaser: String,
+    val wikiTeaser: String?,
     @ColumnInfo(name = "yUrl")
-    val youTubeUrl: String,
+    val youTubeUrl: String?,
     @ColumnInfo(name = "yID")
-    val youTubeId: String
+    val youTubeId: String?
 )

@@ -46,7 +46,14 @@ class SearchViewModel(private val resultDao: ResultDao) : ViewModel() {
             }
 
             resultModel?.map {
-                ResultDTO(it.id, it.name, it.type, it.wikiTeaser, it.youTubeUrl, it.youTubeId)
+                ResultDTO(
+                    it.id,
+                    it.name,
+                    it.type,
+                    it.wikiTeaser.toString(),
+                    it.youTubeUrl.toString(),
+                    it.youTubeId.toString()
+                )
             }?.let { resultDao.insert(it) }
         }
     }
