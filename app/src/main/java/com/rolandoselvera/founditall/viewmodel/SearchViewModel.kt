@@ -1,9 +1,8 @@
 package com.rolandoselvera.founditall.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import com.rolandoselvera.founditall.data.local.db.ResultDTO
 import com.rolandoselvera.founditall.data.local.db.ResultDao
 import com.rolandoselvera.founditall.data.model.ResultModel
 import com.rolandoselvera.founditall.data.remote.ResultsSearch
@@ -11,6 +10,8 @@ import com.rolandoselvera.founditall.domain.GetResultsUseCase
 import kotlinx.coroutines.launch
 
 class SearchViewModel(private val resultDao: ResultDao) : ViewModel() {
+
+    val allResultsDb: LiveData<List<ResultDTO>> = resultDao.getAllResults().asLiveData()
 
     val resultModel = MutableLiveData<List<ResultModel>?>()
     val resultInfo = MutableLiveData<List<ResultsSearch>?>()
@@ -26,9 +27,27 @@ class SearchViewModel(private val resultDao: ResultDao) : ViewModel() {
             if (!result.isNullOrEmpty() or !info.isNullOrEmpty()) {
                 resultModel.postValue(result)
                 resultInfo.postValue(info)
+
+                resultDao.deleteAll()
+
+                insertResults(resultInfo.value, resultModel.value)
             } else {
                 Log.e("TAG1", "Vacío")
             }
+        }
+    }
+
+    private fun insertResults(resultInfo: List<ResultsSearch>?, resultModel: List<ResultModel>?) {
+        viewModelScope.launch {
+            resultInfo?.map {
+                ResultDTO(it.id, it.name, it.type, it.wikiTeaser, it.youTubeUrl, it.youTubeId)
+            }?.let {
+                resultDao.insert(it)
+            }
+
+            resultModel?.map {
+                ResultDTO(it.id, it.name, it.type, it.wikiTeaser, it.youTubeUrl, it.youTubeId)
+            }?.let { resultDao.insert(it) }
         }
     }
 

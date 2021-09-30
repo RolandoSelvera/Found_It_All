@@ -32,7 +32,7 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // TODO: Recibe estos datos temporalmente de esta forma, idealmente hacerlo por consulta a BD
+        // Recibe estos datos temporalmente de esta forma, idealmente hacerlo por consulta a BD mediante ID.
         val navArrayDetail = navigationArgs.name
         val name = navArrayDetail[0]
         val category = navArrayDetail[1].replaceFirstChar {

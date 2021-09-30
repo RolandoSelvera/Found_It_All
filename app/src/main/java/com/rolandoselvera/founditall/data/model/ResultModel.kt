@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class ResultModel(
-    //val id: Int = 0,
+    val id: Int,
     @SerializedName("Name")
     val name: String?,
     @SerializedName("Type")

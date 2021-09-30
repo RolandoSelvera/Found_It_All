@@ -8,9 +8,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ResultDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(resultDTO: ResultDTO)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(resultDTO: List<ResultDTO>)
+
+    @Query("DELETE FROM Results")
+    suspend fun deleteAll()
 
     @Query("SELECT * FROM Results")
-    fun getAllResults(): Flow<ResultDTO>
+    fun getAllResults(): Flow<List<ResultDTO>>
 }

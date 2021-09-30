@@ -1,6 +1,8 @@
 package com.rolandoselvera.founditall.view
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -18,6 +20,7 @@ import com.rolandoselvera.founditall.viewmodel.SearchViewModel
 import android.widget.AdapterView
 import android.widget.Toast
 import com.rolandoselvera.founditall.core.base.BaseApplication
+import com.rolandoselvera.founditall.data.model.ResultModel
 import com.rolandoselvera.founditall.viewmodel.SearchViewModelFactory
 
 class SearchFragment : Fragment() {
@@ -64,8 +67,16 @@ class SearchFragment : Fragment() {
      * y los muestra al usuario.
      */
     private fun observeResults() {
-        searchViewModel.resultModel.observe(this.viewLifecycleOwner) {
-            adapter.submitList(it)
+        if (checkConnectivity()) {
+            searchViewModel.resultModel.observe(this.viewLifecycleOwner) {
+                adapter.submitList(it)
+            }
+        } else {
+            searchViewModel.allResultsDb.observe(this.viewLifecycleOwner) {
+                adapter.submitList(it.map {
+                    ResultModel(it.id, it.name, it.type, it.wikiTeaser, it.youTubeUrl, it.youTubeId)
+                })
+            }
         }
     }
 
@@ -74,58 +85,35 @@ class SearchFragment : Fragment() {
      * y los muestra al usuario.
      */
     private fun observeInfo() {
-        searchViewModel.resultInfo.observe(this.viewLifecycleOwner) { infoResult ->
+        if (checkConnectivity()) {
+            searchViewModel.resultInfo.observe(this.viewLifecycleOwner) { infoResult ->
 
-            statesContainers = !infoResult.isNullOrEmpty()
+                statesContainers = !infoResult.isNullOrEmpty()
 
-            val title = infoResult?.get(0)?.name
-            val type =
-                infoResult?.get(0)?.type?.replaceFirstChar {  // Convierte el primer caracter del texto a mayúscula
-                    it.uppercase()
-                }
-            val youtubeId = infoResult?.get(0)?.youTubeId.toString()
-            val wikiTeaser = infoResult?.get(0)?.wikiTeaser.toString()
+                val title = infoResult?.get(0)?.name
+                val type =
+                    infoResult?.get(0)?.type?.replaceFirstChar {  // Convierte el primer caracter del texto a mayúscula
+                        it.uppercase()
+                    }
+                val youtubeId = infoResult?.get(0)?.youTubeId.toString()
+                val wikiTeaser = infoResult?.get(0)?.wikiTeaser.toString()
 
-            binding.apply {
+                setUpInfoResult(title.toString(), type.toString(), youtubeId, wikiTeaser)
+            }
+        } else {
+            searchViewModel.allResultsDb.observe(this.viewLifecycleOwner) { infoResult ->
 
-                if (type.equals("Unknown")) {
-                    statesContainers = false
-                    containerStates.progress.visibility = View.GONE
-                    containerStates.titleStates.text = getString(
-                        R.string.try_again,
-                        fieldSearch.text.toString()
-                    )
-                }
+                statesContainers = !infoResult.isNullOrEmpty()
 
-                containerInfo.title.text = title
-                containerInfo.category.text = type
+                val title = infoResult?.get(0)?.name
+                val type =
+                    infoResult?.get(0)?.type?.replaceFirstChar {  // Convierte el primer caracter del texto a mayúscula
+                        it.uppercase()
+                    }
+                val youtubeId = infoResult?.get(0)?.youTubeId.toString()
+                val wikiTeaser = infoResult?.get(0)?.wikiTeaser.toString()
 
-                // Muestra miniaturas (thumbnails) de videos de YouTube con Glide:
-                Glide.with(containerInfo.image.context)
-                    .asBitmap()
-                    .error(R.drawable.ic_img_preview)  // Miniatura si ocurre un error al cargar imagen
-                    .load(
-                        containerInfo.image.context.getString(
-                            R.string.youtube_url_thumbnail, youtubeId
-                        )
-                    )
-                    .diskCacheStrategy(DiskCacheStrategy.DATA)
-                    .into(containerInfo.image)
-
-                containerInfo.root.setOnClickListener {
-                    val action = SearchFragmentDirections
-                        .actionSearchFragmentToDetailFragment(
-                            arrayOf(
-                                title.toString(),
-                                type.toString(),
-                                youtubeId,
-                                wikiTeaser
-                            )
-                        )
-                    findNavController().navigate(action)
-                }
-
-                checkUIContainers()
+                setUpInfoResult(title.toString(), type.toString(), youtubeId, wikiTeaser)
             }
         }
     }
@@ -138,15 +126,19 @@ class SearchFragment : Fragment() {
      * @return Devuelve la categoría con la búsqueda del usuario.
      */
     private fun checkSelectedCategory(search: String): String {
-        return when (binding.spinnerCategory.selectedItemPosition) {
-            1 -> getString(R.string.search_by_author, search)
-            2 -> getString(R.string.search_by_book, search)
-            3 -> getString(R.string.search_by_game, search)
-            4 -> getString(R.string.search_by_podcast, search)
-            5 -> getString(R.string.search_by_movie, search)
-            6 -> getString(R.string.search_by_music, search)
-            7 -> getString(R.string.search_by_show, search)
-            else -> search
+        return if (checkConnectivity()) {
+            when (binding.spinnerCategory.selectedItemPosition) {
+                1 -> getString(R.string.search_by_author, search)
+                2 -> getString(R.string.search_by_book, search)
+                3 -> getString(R.string.search_by_game, search)
+                4 -> getString(R.string.search_by_podcast, search)
+                5 -> getString(R.string.search_by_movie, search)
+                6 -> getString(R.string.search_by_music, search)
+                7 -> getString(R.string.search_by_show, search)
+                else -> search
+            }
+        } else {
+            search
         }
     }
 
@@ -170,6 +162,57 @@ class SearchFragment : Fragment() {
     }
 
     /**
+     * Método para inicializar item de Resultado.
+     */
+    private fun setUpInfoResult(
+        title: String,
+        type: String,
+        youtubeId: String,
+        wikiTeaser: String
+    ) {
+        binding.apply {
+            if (type.equals("Unknown")) {
+                statesContainers = false
+                containerStates.progress.visibility = View.GONE
+                containerStates.titleStates.text = getString(
+                    R.string.try_again,
+                    fieldSearch.text.toString()
+                )
+            }
+
+            containerInfo.title.text = title
+            containerInfo.category.text = type
+
+            // Muestra miniaturas (thumbnails) de videos de YouTube con Glide:
+            Glide.with(containerInfo.image.context)
+                .asBitmap()
+                .error(R.drawable.ic_img_preview)  // Miniatura si ocurre un error al cargar imagen
+                .load(
+                    containerInfo.image.context.getString(
+                        R.string.youtube_url_thumbnail, youtubeId
+                    )
+                )
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                .into(containerInfo.image)
+
+            containerInfo.root.setOnClickListener {
+                val action = SearchFragmentDirections
+                    .actionSearchFragmentToDetailFragment(
+                        arrayOf(
+                            title,
+                            type,
+                            youtubeId,
+                            wikiTeaser
+                        )
+                    )
+                findNavController().navigate(action)
+            }
+
+            checkUIContainers()
+        }
+    }
+
+    /**
      * Inicializa y establece acciones de búsqueda.
      */
     private fun setUpSearchButton() {
@@ -181,7 +224,12 @@ class SearchFragment : Fragment() {
                 if (userSearch.isNotBlank()) {
                     statesContainers = false
 
-                    searchViewModel.invokeApiResults(searchWithCategory)
+                    if (checkConnectivity()) {
+                        searchViewModel.invokeApiResults(searchWithCategory)
+                    } else {
+                        statesContainers = true
+                    }
+
                     containerStates.progress.visibility = View.VISIBLE
                     containerStates.titleStates.text = getString(R.string.searching)
 
@@ -336,6 +384,33 @@ class SearchFragment : Fragment() {
                 tilSearch.isEnabled = true
                 search.isEnabled = true
             }
+        }
+    }
+
+    /**
+     * Método que comprueba si el dispositivo cuenta con conexión a internet.
+     *
+     * @return Devuelve 'true' si tiene conexión a internet y 'false' si no la tiene.
+     */
+    private fun checkConnectivity(): Boolean {
+        val connectivityManager =
+            context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        // Devuelve una instancia de la conexión de la red activa:
+        val isNetworkActive = connectivityManager.activeNetwork ?: return false
+
+        // Obtiene "capacidades" o características de la red (capabilities):
+        val capabilitiesNetwork =
+            connectivityManager.getNetworkCapabilities(isNetworkActive) ?: return false
+
+        return when {
+            // Comprueba si el dispositivo está conectado por WiFi:
+            capabilitiesNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+
+            // Comprueba si el dispositivo está conectado por datos móviles:
+            capabilitiesNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+
+            else -> false
         }
     }
 

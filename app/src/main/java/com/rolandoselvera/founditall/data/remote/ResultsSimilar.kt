@@ -13,6 +13,7 @@ data class ResultsSimilar(
 
 // Obtiene lista resultados de nodo 'Info' y 'Results':
 data class ResultsSearch(
+    val id: Int,
     @SerializedName("Results")
     val resultsEndpoint: List<ResultModel>?,
     @SerializedName("Info")
