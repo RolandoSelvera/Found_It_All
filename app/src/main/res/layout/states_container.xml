@@ -17,10 +17,11 @@
 
     <TextView
         android:id="@+id/titleStates"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dimen_8"
         android:fontFamily="@font/questrial"
+        android:gravity="center"
         android:text="@string/nothing_here"
         android:textColor="@color/black"
         android:textSize="@dimen/text_18"
