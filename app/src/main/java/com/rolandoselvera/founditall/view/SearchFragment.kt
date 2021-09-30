@@ -84,8 +84,8 @@ class SearchFragment : Fragment() {
 
                 if (type.equals("Unknown")) {
                     statesContainers = false
-                    binding.containerStates.progress.visibility = View.GONE
-                    binding.containerStates.titleStates.text = getString(
+                    containerStates.progress.visibility = View.GONE
+                    containerStates.titleStates.text = getString(
                         R.string.try_again,
                         fieldSearch.text.toString()
                     )
