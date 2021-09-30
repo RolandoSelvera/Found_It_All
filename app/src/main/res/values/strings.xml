@@ -23,6 +23,7 @@
     <string name="search_by_movie">movie:%1$s</string>
     <string name="search_by_music">music:%1$s</string>
     <string name="search_by_show">show:%1$s</string>
+    <string name="try_again">"No results for \"%1$s\", try again."</string>
 
     <string-array name="categories">
         <item>Select:</item>

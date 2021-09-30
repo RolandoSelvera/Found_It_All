@@ -81,6 +81,16 @@ class SearchFragment : Fragment() {
             val wikiTeaser = infoResult?.get(0)?.wikiTeaser.toString()
 
             binding.apply {
+
+                if (type.equals("Unknown")) {
+                    statesContainers = false
+                    binding.containerStates.progress.visibility = View.GONE
+                    binding.containerStates.titleStates.text = getString(
+                        R.string.try_again,
+                        fieldSearch.text.toString()
+                    )
+                }
+
                 containerInfo.title.text = title
                 containerInfo.category.text = type
 
