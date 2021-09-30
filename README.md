@@ -40,7 +40,7 @@ En el diseño de la app se siguieron los lineamientos de [Material Design](https
 
 ### Información sobre la API
 
-La consulta a la API se realiza a través de [TasteDive]. Puedes consultar la documentación en el siguiente enlace:
+La consulta a la API se realiza a través de [TasteDive](https://tastedive.com/). Puedes consultar la documentación en el siguiente enlace:
 
 * [API TasteDive](https://tastedive.com/read/api)
 
