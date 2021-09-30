@@ -2,10 +2,8 @@ package com.rolandoselvera.founditall.view
 
 import android.content.Context
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import androidx.fragment.app.activityViewModels
@@ -18,6 +16,7 @@ import com.rolandoselvera.founditall.databinding.FragmentSearchBinding
 import com.rolandoselvera.founditall.view.adapter.SearchAdapter
 import com.rolandoselvera.founditall.viewmodel.SearchViewModel
 import android.widget.AdapterView
+import android.widget.Toast
 
 class SearchFragment : Fragment() {
 
@@ -331,6 +330,26 @@ class SearchFragment : Fragment() {
         val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as
                 InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_search, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.settings -> {
+                Toast.makeText(context, "Click!", Toast.LENGTH_SHORT).show()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onResume() {

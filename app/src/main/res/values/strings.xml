@@ -13,6 +13,7 @@
     <string name="similar">Similar: %1$s</string>
     <string name="empty_field">Empty field</string>
     <string name="searching">Searching…</string>
+    <string name="settings">Settings</string>
 
     <!-- Para búsquedas: -->
     <string name="search_by_author">author:%1$s</string>
