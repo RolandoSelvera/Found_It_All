@@ -12,6 +12,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstan
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.rolandoselvera.founditall.R
+import com.rolandoselvera.founditall.core.internet.ConnectivityUtil
 import com.rolandoselvera.founditall.databinding.FragmentDetailBinding
 
 class DetailFragment : Fragment() {
@@ -56,9 +57,13 @@ class DetailFragment : Fragment() {
      * @param videoId Id de video de YouTube.
      */
     private fun isVideoAvailable(videoId: String) {
-        if (!videoId.isNullOrBlank() and (videoId != "null")) {
-            binding.youTubePlayer.visibility = View.VISIBLE
-            youTubePlayerReady(videoId)
+        if (checkConnectivity()) {
+            if (!videoId.isNullOrBlank() and (videoId != "null")) {
+                binding.youTubePlayer.visibility = View.VISIBLE
+                youTubePlayerReady(videoId)
+            } else {
+                binding.image.visibility = View.VISIBLE
+            }
         } else {
             binding.image.visibility = View.VISIBLE
         }
@@ -102,6 +107,15 @@ class DetailFragment : Fragment() {
                 Log.e("ERROR", error.toString())
             }
         })
+    }
+
+    /**
+     * Comprueba si el dispositivo cuenta con conexión a internet.
+     *
+     * @return Devuelve 'true' si tiene conexión a internet y 'false' si no la tiene.
+     */
+    private fun checkConnectivity(): Boolean {
+        return ConnectivityUtil(context).checkConnectivity()
     }
 
     /**

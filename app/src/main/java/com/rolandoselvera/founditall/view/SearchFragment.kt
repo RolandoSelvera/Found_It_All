@@ -1,8 +1,6 @@
 package com.rolandoselvera.founditall.view
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -20,6 +18,7 @@ import com.rolandoselvera.founditall.viewmodel.SearchViewModel
 import android.widget.AdapterView
 import android.widget.Toast
 import com.rolandoselvera.founditall.core.base.BaseApplication
+import com.rolandoselvera.founditall.core.internet.ConnectivityUtil
 import com.rolandoselvera.founditall.data.model.ResultModel
 import com.rolandoselvera.founditall.viewmodel.SearchViewModelFactory
 
@@ -241,6 +240,8 @@ class SearchFragment : Fragment() {
                         searchViewModel.invokeApiResults(searchWithCategory)
                     } else {
                         statesContainers = true
+                        observeInfo()
+                        observeResults()
                     }
 
                     containerStates.progress.visibility = View.VISIBLE
@@ -405,30 +406,12 @@ class SearchFragment : Fragment() {
     }
 
     /**
-     * Método que comprueba si el dispositivo cuenta con conexión a internet.
+     * Comprueba si el dispositivo cuenta con conexión a internet.
      *
      * @return Devuelve 'true' si tiene conexión a internet y 'false' si no la tiene.
      */
     private fun checkConnectivity(): Boolean {
-        val connectivityManager =
-            context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-        // Devuelve una instancia de la conexión de la red activa:
-        val isNetworkActive = connectivityManager.activeNetwork ?: return false
-
-        // Obtiene "capacidades" o características de la red (capabilities):
-        val capabilitiesNetwork =
-            connectivityManager.getNetworkCapabilities(isNetworkActive) ?: return false
-
-        return when {
-            // Comprueba si el dispositivo está conectado por WiFi:
-            capabilitiesNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-
-            // Comprueba si el dispositivo está conectado por datos móviles:
-            capabilitiesNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-
-            else -> false
-        }
+        return ConnectivityUtil(context).checkConnectivity()
     }
 
     /**
