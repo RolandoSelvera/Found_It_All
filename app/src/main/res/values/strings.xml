@@ -10,7 +10,9 @@
     <string name="youtube_player_error">An error occurred in the YouTube player. Please try again later.</string>
     <string name="youtube_url_thumbnail">https://img.youtube.com/vi/%1$s/hqdefault.jpg</string>
     <string name="result">Result:</string>
-    <string name="similar">Similar:</string>
+    <string name="similar">Similar: %1$s</string>
+    <string name="empty_field">Empty field</string>
+    <string name="searching">Searching…</string>
 
     <!-- Para búsquedas: -->
     <string name="search_by_author">author:%1$s</string>

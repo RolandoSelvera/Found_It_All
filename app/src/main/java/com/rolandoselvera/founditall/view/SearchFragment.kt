@@ -26,6 +26,8 @@ class SearchFragment : Fragment() {
 
     private lateinit var adapter: SearchAdapter
 
+    private var statesContainers = false
+
     private val searchViewModel: SearchViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -41,31 +43,15 @@ class SearchFragment : Fragment() {
 
         setUpSpinner()
 
-        setUpContainers()
+        checkUIContainers()
 
-        setUpAdapter()
+        setUpRecyclerAdapter()
 
         observeResults()
 
         observeInfo()
 
         setUpSearchButton()
-    }
-
-    private fun setUpAdapter() {
-        adapter = SearchAdapter { result ->
-            val action = SearchFragmentDirections
-                .actionSearchFragmentToDetailFragment(
-                    arrayOf(
-                        result.name.toString(),
-                        result.type.toString(),
-                        result.youTubeId,
-                        result.wikiTeaser
-                    )
-                )
-            this.findNavController().navigate(action)
-        }
-        binding.containerResults.recyclerView.adapter = adapter
     }
 
     /**
@@ -83,61 +69,59 @@ class SearchFragment : Fragment() {
      * y los muestra al usuario.
      */
     private fun observeInfo() {
-        searchViewModel.resultInfo.observe(this.viewLifecycleOwner) {
+        searchViewModel.resultInfo.observe(this.viewLifecycleOwner) { infoResult ->
+
+            statesContainers = !infoResult.isNullOrEmpty()
+
+            val title = infoResult?.get(0)?.name
+            val type =
+                infoResult?.get(0)?.type?.replaceFirstChar {  // Convierte el primer caracter del texto a mayúscula
+                    it.uppercase()
+                }
+            val youtubeId = infoResult?.get(0)?.youTubeId.toString()
+            val wikiTeaser = infoResult?.get(0)?.wikiTeaser.toString()
+
             binding.apply {
-                containerInfo.title.text = it?.get(0)?.name
-                containerInfo.category.text =
-                    it?.get(0)?.type?.replaceFirstChar {  // Convierte el primer caracter del texto a mayúscula
-                        it.uppercase()
-                    }
+                containerInfo.title.text = title
+                containerInfo.category.text = type
+
                 // Muestra miniaturas (thumbnails) de videos de YouTube con Glide:
                 Glide.with(containerInfo.image.context)
                     .asBitmap()
                     .error(R.drawable.ic_img_preview)  // Miniatura si ocurre un error al cargar imagen
                     .load(
                         containerInfo.image.context.getString(
-                            R.string.youtube_url_thumbnail, it?.get(0)?.youTubeId
+                            R.string.youtube_url_thumbnail, youtubeId
                         )
                     )
                     .diskCacheStrategy(DiskCacheStrategy.DATA)
                     .into(containerInfo.image)
+
+                containerInfo.root.setOnClickListener {
+                    val action = SearchFragmentDirections
+                        .actionSearchFragmentToDetailFragment(
+                            arrayOf(
+                                title.toString(),
+                                type.toString(),
+                                youtubeId,
+                                wikiTeaser
+                            )
+                        )
+                    findNavController().navigate(action)
+                }
+
+                checkUIContainers()
             }
         }
     }
 
-    private fun checkState(): Boolean? {
-        return searchViewModel.isLoadingModel.value
-    }
-
-    // TODO: Revisar visibilidad de contenedores.
-    private fun setUpContainers() {
-        val states = checkState()
-
-        binding.apply {
-            if (states == false) {
-                containerStates.root.visibility = View.GONE
-                containerInfo.root.visibility = View.VISIBLE
-                containerResults.root.visibility = View.VISIBLE
-            } else {
-                containerStates.root.visibility = View.VISIBLE
-                containerInfo.root.visibility = View.GONE
-                containerResults.root.visibility = View.GONE
-            }
-        }
-    }
-
-    private fun setUpSearchButton() {
-        binding.search.setOnClickListener {
-            val userSearch = binding.fieldSearch.text.toString()
-            val searchWithCategory = checkSelectedCategory(userSearch)
-
-            searchViewModel.onCreate(searchWithCategory)
-            hideKeyboard()
-
-            setUpContainers()
-        }
-    }
-
+    /**
+     * Establece el criterio de búsqueda por categoría, añadiendo
+     * el parámetro (prefijo) según la categoría (type).
+     *
+     * @param search Búsqueda del usuario.
+     * @return Devuelve la categoría con la búsqueda del usuario.
+     */
     private fun checkSelectedCategory(search: String): String {
         return when (binding.spinnerCategory.selectedItemPosition) {
             1 -> getString(R.string.search_by_author, search)
@@ -151,6 +135,83 @@ class SearchFragment : Fragment() {
         }
     }
 
+    /**
+     * Inicializa RecyclerView y Adapter.
+     */
+    private fun setUpRecyclerAdapter() {
+        adapter = SearchAdapter { result ->
+            val action = SearchFragmentDirections
+                .actionSearchFragmentToDetailFragment(
+                    arrayOf(
+                        result.name.toString(),
+                        result.type.toString(),
+                        result.youTubeId,
+                        result.wikiTeaser
+                    )
+                )
+            this.findNavController().navigate(action)
+        }
+        binding.containerResults.recyclerView.adapter = adapter
+    }
+
+    /**
+     * Inicializa y establece acciones de búsqueda.
+     */
+    private fun setUpSearchButton() {
+        binding.apply {
+            search.setOnClickListener {
+                val userSearch = fieldSearch.text.toString()
+                val searchWithCategory = checkSelectedCategory(userSearch)
+
+                if (userSearch.isNotBlank()) {
+                    statesContainers = false
+
+                    searchViewModel.invokeApiResults(searchWithCategory)
+                    containerStates.progress.visibility = View.VISIBLE
+                    containerStates.titleStates.text = getString(R.string.searching)
+
+                    tilSearch.isErrorEnabled = false
+                    tilSearch.error = null
+                } else {
+                    tilSearch.isErrorEnabled = true
+                    tilSearch.error = getString(R.string.empty_field)
+                }
+
+                hideKeyboard()
+
+                checkUIContainers()
+            }
+        }
+    }
+
+    /**
+     * Muestra/oculta los contenedores de estado y resultados.
+     */
+    private fun checkUIContainers() {
+        binding.apply {
+            when (statesContainers) {
+                true -> {
+                    containerStates.root.visibility = View.GONE
+                    containerInfo.root.visibility = View.VISIBLE
+                    containerResults.root.visibility = View.VISIBLE
+
+                    containerResults.similar.text = getString(
+                        R.string.similar,
+                        searchViewModel.resultModel.value?.size.toString()
+                    )
+                }
+                false -> {
+                    containerStates.root.visibility = View.VISIBLE
+                    containerInfo.root.visibility = View.GONE
+                    containerResults.root.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    /**
+     * Inicializa Spinner.
+     */
     private fun setUpSpinner() {
         val categories = resources.getStringArray(R.array.categories)
         val adapter = ArrayAdapter(requireContext(), R.layout.item_dropdown, categories)
@@ -171,15 +232,15 @@ class SearchFragment : Fragment() {
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
-
-            spinnerCategory.setOnFocusChangeListener { _, hasFocus ->
-                if (hasFocus) {
-                    hideKeyboard()
-                }
-            }
         }
     }
 
+    /**
+     * Método que carga la última categoría seleccionada por el usuario
+     * en el Spinner.
+     *
+     * @return Categoría seleccionada.
+     */
     private fun loadPreferences(): Int {
         val categorySelected = PreferencesProvider(context).getCategory()
 
@@ -197,6 +258,11 @@ class SearchFragment : Fragment() {
         return categorySelected
     }
 
+    /**
+     * Cambia la categoría del Spinner.
+     *
+     * @param itemSelected Item seleccionado.
+     */
     private fun changeCategory(itemSelected: Int) {
 
         when (searchViewModel.selectedCategory(itemSelected)) {
@@ -243,6 +309,9 @@ class SearchFragment : Fragment() {
         }
     }
 
+    /**
+     * Habilita/deshabilita campo de búsqueda.
+     */
     private fun enableSearch() {
         binding.apply {
             if (spinnerCategory.selectedItemPosition == 0) {

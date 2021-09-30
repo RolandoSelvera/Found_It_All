@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Rolando/AndroidStudioProjects/FoundItAll/app/src/main/res/drawable/background_shape.xml" value="0.140625" />
         <entry key="..\:/Users/Rolando/AndroidStudioProjects/FoundItAll/app/src/main/res/drawable/ic_logo_test.xml" value="0.2846153846153846" />
         <entry key="..\:/Users/Rolando/AndroidStudioProjects/FoundItAll/app/src/main/res/drawable/ic_search.xml" value="0.2890625" />
         <entry key="..\:/Users/Rolando/AndroidStudioProjects/FoundItAll/app/src/main/res/drawable/shape_circle.xml" value="0.2890625" />
@@ -11,7 +12,7 @@
         <entry key="..\:/Users/Rolando/AndroidStudioProjects/FoundItAll/app/src/main/res/layout/dropdown_item.xml" value="0.27291666666666664" />
         <entry key="..\:/Users/Rolando/AndroidStudioProjects/FoundItAll/app/src/main/res/layout/fragment_detail.xml" value="0.27291666666666664" />
         <entry key="..\:/Users/Rolando/AndroidStudioProjects/FoundItAll/app/src/main/res/layout/fragment_search.xml" value="0.25" />
-        <entry key="..\:/Users/Rolando/AndroidStudioProjects/FoundItAll/app/src/main/res/layout/item_list_info.xml" value="0.25" />
+        <entry key="..\:/Users/Rolando/AndroidStudioProjects/FoundItAll/app/src/main/res/layout/item_list_info.xml" value="0.33" />
         <entry key="..\:/Users/Rolando/AndroidStudioProjects/FoundItAll/app/src/main/res/layout/item_list_results.xml" value="0.33" />
         <entry key="..\:/Users/Rolando/AndroidStudioProjects/FoundItAll/app/src/main/res/layout/results_similar_container.xml" value="0.22" />
         <entry key="..\:/Users/Rolando/AndroidStudioProjects/FoundItAll/app/src/main/res/layout/states_container.xml" value="0.27291666666666664" />

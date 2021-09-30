@@ -56,7 +56,7 @@ class DetailFragment : Fragment() {
      * @param videoId Id de video de YouTube.
      */
     private fun isVideoAvailable(videoId: String) {
-        if (!videoId.isNullOrBlank()) {
+        if (!videoId.isNullOrBlank() and (videoId != "null")) {
             binding.youTubePlayer.visibility = View.VISIBLE
             youTubePlayerReady(videoId)
         } else {
