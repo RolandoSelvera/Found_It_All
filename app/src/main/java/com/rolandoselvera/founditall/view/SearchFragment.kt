@@ -17,6 +17,8 @@ import com.rolandoselvera.founditall.view.adapter.SearchAdapter
 import com.rolandoselvera.founditall.viewmodel.SearchViewModel
 import android.widget.AdapterView
 import android.widget.Toast
+import com.rolandoselvera.founditall.core.base.BaseApplication
+import com.rolandoselvera.founditall.viewmodel.SearchViewModelFactory
 
 class SearchFragment : Fragment() {
 
@@ -27,7 +29,11 @@ class SearchFragment : Fragment() {
 
     private var statesContainers = false
 
-    private val searchViewModel: SearchViewModel by activityViewModels()
+    private val searchViewModel: SearchViewModel by activityViewModels {
+        SearchViewModelFactory(
+            (activity?.application as BaseApplication).database.resultDao()
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

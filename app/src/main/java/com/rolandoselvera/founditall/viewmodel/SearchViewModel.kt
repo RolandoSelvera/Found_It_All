@@ -4,12 +4,13 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rolandoselvera.founditall.data.local.db.ResultDao
 import com.rolandoselvera.founditall.data.model.ResultModel
 import com.rolandoselvera.founditall.data.remote.ResultsSearch
 import com.rolandoselvera.founditall.domain.GetResultsUseCase
 import kotlinx.coroutines.launch
 
-class SearchViewModel : ViewModel() {
+class SearchViewModel(private val resultDao: ResultDao) : ViewModel() {
 
     val resultModel = MutableLiveData<List<ResultModel>?>()
     val resultInfo = MutableLiveData<List<ResultsSearch>?>()
