@@ -10,6 +10,8 @@ Android y [Jetpack](https://developer.android.com/jetpack?hl=es-419):
 
 * [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel)
 * [LiveData](https://developer.android.com/topic/libraries/architecture/livedata?hl=es-419)
+* [Corrutinas](https://developer.android.com/kotlin/coroutines?hl=es-419)
+* [Flow](https://developer.android.com/kotlin/flow?hl=es-419)
 * [Navigation](https://developer.android.com/guide/navigation/navigation-getting-started)
 * [Fragments](https://developer.android.com/guide/components/fragments)
 * [SharedPreferences](https://developer.android.com/training/data-storage/shared-preferences?hl=es-419)
@@ -40,7 +42,7 @@ En el diseño de la app se siguieron los lineamientos de [Material Design](https
 
 ### Información sobre la API
 
-La consulta a la API se realiza a través de [TasteDive](https://tastedive.com/). Puedes consultar la documentación en el siguiente enlace:
+La consulta a la API se realiza a través de [TasteDive](https://tastedive.com/). Puedes leer la documentación en el siguiente enlace:
 
 * [API TasteDive](https://tastedive.com/read/api)
 
