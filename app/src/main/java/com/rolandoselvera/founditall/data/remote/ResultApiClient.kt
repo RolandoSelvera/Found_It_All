@@ -3,7 +3,9 @@ package com.rolandoselvera.founditall.data.remote
 import retrofit2.Response
 import retrofit2.http.*
 
-private const val API_KEY = "417201-TestAppM-6O2E8KBC"
+// Genera tu API KEY y reemplaza este valor. Consulta la documentación desde el sig. enlace
+// para generarlo: https://tastedive.com/read/api
+private const val API_KEY = "424981-FoundItA-DVB6HS1N"
 
 interface ResultApiClient {
 
